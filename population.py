@@ -1,7 +1,9 @@
 # Definition of the population class
 
 
-import Solution.py
+import solution.py
+import SubProblem.py
+import lam_nbd.py
 
 class Population(object):
 
@@ -11,7 +13,7 @@ class Population(object):
     ideal_Z : Ideal point of the solutions
     """
 
-    def _init_(self, number_of_solution):
+    def _init_(self, number_of_solution, list_of_subporblems):
 
         """
         :param number_of_solution: The size of the population, how many solutions it will contain
@@ -22,13 +24,8 @@ class Population(object):
 
         self.number_of_solution = number_of_solution
 
-        for i in range(self.number_of_solution):
-            sol = Solution(30, ['Continuous'] * 30, i)
-            sub_problem = ,,
-            while not sol.feasible:
-                sol = Solution(30, ['Continuous'] * 30, i)
-            if sub_problem not in self.list_of_subproblems:
-                self.list_of_subproblems.append(sub_problem)
+        for subproblem in list_of_subporblems:
+            sol = SubProblem.cur_solution
             self.list_of_solutions.append(sol)
 
         self.ideal_Z = self.compute_ideal_z(self.list_of_solution)
