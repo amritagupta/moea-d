@@ -46,7 +46,7 @@ class Population(object):
             for value in solution.objective_val:
                 if ideal_Z[value] == None:
                     ideal_Z[value] = value
-                if value < ideal_Z:
+                if value < ideal_Z:   #minimizing 
                     ideal_Z[value] = value
 
         return ideal_Z
