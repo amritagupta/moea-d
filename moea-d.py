@@ -10,3 +10,8 @@ import random
 import numpy as np
 from numpy.random import choice
 from gurobipy import*
+
+
+#PARAMETERS_______________________
+
+T = 10 # number of neighbors
