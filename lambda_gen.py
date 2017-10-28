@@ -3,9 +3,6 @@
 from __future__ import print_function
 import sys
 print(sys.argv)
-import os
-import csv
-import time
 import random
 import numpy as np
 from scipy.special import comb
