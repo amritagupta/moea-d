@@ -12,5 +12,7 @@ def lam_nbd(lam, T=10):
     B = np.empty([N,T+1],int)
     nbrs = NearestNeighbors(n_neighbors=T+1, algorithm='ball_tree', metric='euclidean').fit(lam)
     distances, B = nbrs.kneighbors(lam)
-    for i in range(N):
-        B[i,:] = B[i,1:T+1]
+    B = B[:,1:T+1]
+#    for i in range(N):
+#        B[i,:] = B[i,1:T+1]
+    return B

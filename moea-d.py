@@ -18,3 +18,4 @@ from lam_nbd import lam_nbd
 
 T = 10 # number of neighbors
 lam = lambda_gen(3, 30,25)
+B = lam_nbd(lam)

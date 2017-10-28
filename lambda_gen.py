@@ -10,11 +10,11 @@ from scipy.special import comb
 
 def lambda_gen(m,n,H=25):
     #H = 25
-    N = comb(H+m-1, m-1)  # number of subproblems
-    lam = np.empty([N,m],float)
+    N = int(comb(H+m-1, m-1))  # number of subproblems
+    lam = np.empty([N,m])
     for i in range(N): 
         for k in range(m):
-            lam[i, k] = float(1/H)*random.choice(range(H+1))
+            lam[i, k] = 1/float(H)*random.choice(range(H+1))
             # each roq is one lambda vector with m weights
         lam[i,:]=float(1/sum(lam[i,:]))*lam[i,:]
     return lam
