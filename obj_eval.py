@@ -3,10 +3,14 @@
 from __future__ import print_function
 import sys
 print(sys.argv)
-import os
-import csv
-import time
-import random
+
 import numpy as np
-from numpy.random import choice
-from gurobipy import*
+
+def obj_eval(F,x):
+    #n = len(x)
+    m = len(F) # number of rows
+    for i in range(m):
+        FV[i]=np.dot(F[i],x)
+    return FV
+    
+    
