@@ -3,6 +3,7 @@
 This module defines objects related to the population in the MOEA/D genetic algorithm.
 """
 import numpy as np
+import random
 
 class Solution(object):
 	"""
@@ -81,6 +82,40 @@ class Solution(object):
 			solution_feasible = True
 
 		return solution_feasible
+
+	def crossover_operator(self, solution2):
+
+		crossover_point = random.choice(range(1, self.n_dim - 1))
+
+		new_solution1 = Solution(self.n_dim, self.num_type, self.subproblem)
+		new_solution2 = Solution(self.n_dim, self.num_type, self.subproblem)
+
+		for dimension in range(0, self.n_dim - 1):
+			if dimension < crossover_point:
+				new_solution1.x[dimension] = self.x[dimension]
+				new_solution2.x[dimension] = solution2.x[dimension]
+			elif dimension >= crossover_point:
+				new_solution1.x[dimension] = solution2.x[dimension]
+				new_solution2.x[dimension] = self.x[dimension]
+
+		child_choice = random.choice(range(1,2))
+		if child_choice == 1:
+			child = new_solution1
+		elif child_choice == 2:
+			child = new_solution2
+
+		return child
+
+	def mutation_operator(self, frequency_of_change, amplitude_of_change):
+
+		evolution = self
+		for dimension in range(0, self.n_dim - 1):
+			change = np.random.binomial(1, frequency_of_change)
+			if change == 1:
+				evolution.x[dimension] = self.x[dimension] + np.random.uniform(-1, 1)*amplitude_of_change
+
+		return evolution
+
 
 
 ### Test Area
