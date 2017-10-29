@@ -7,15 +7,18 @@ import os
 import csv
 import time
 import random
+from g_te import g_te
 import numpy as np
 from numpy.random import choice
-from gurobipy import*
 from sklearn.neighbors import NearestNeighbors
+import matplotlib.pyplot as plt
+plt.style.use('ggplot')
 
 from lambda_gen import lambda_gen
 from lam_nbd import lam_nbd
-from SubProblem import SubProblem
-from solution import solution
+from SubProblem import *
+import solution
+import dominance_check
 #PARAMETERS_______________________
 
 T = 10 # number of neighbors
@@ -26,42 +29,48 @@ B = lam_nbd(lam)
 N = len(lam)
 subproblem_list = []
 for i in range(N):
-    temp_sol = solution(n,['Continuous']*n,i)
+    temp_sol = solution.Solution(n,['Continuous']*n,i)
     while not temp_sol.feasible:
-        temp_sol = solution(n, ['Continuous'] * n, i)
+        temp_sol = solution.Solution(n, ['Continuous'] * n, i)
     temp_sub = SubProblem(i,lam[i,:],B[i,:],temp_sol)
     subproblem_list.append(temp_sub)
     
 list_of_solution = [subprob.cur_solution for subprob in subproblem_list]
 ideal_Z  = [None] * m
 for solution in list_of_solution:
-    for value in solution.objective_val:
-        if ideal_Z[value] == None:
-            ideal_Z[value] = value
-        if value < ideal_Z:   #minimizing 
-            ideal_Z[value] = value
+    for obj_dim in range(len(solution.objective_val)):
+        if ideal_Z[obj_dim] == None:
+            ideal_Z[obj_dim] = solution.objective_val[obj_dim]
+        if solution.objective_val[obj_dim] < ideal_Z[obj_dim]:   #minimizing
+            ideal_Z[obj_dim] = solution.objective_val[obj_dim]
 
 EP = []
-MAXGEN = 5
+MAXGEN = 2500
 for generation in range(MAXGEN):
+    if generation%20 == 0:
+        print(generation)
     for i in range(N): # for each subproblem
         parents = np.random.choice(subproblem_list[i].B,2,replace = False)
-        offspring = genetic(parents)         #Genetic Operators
-        offspring = repair(offspring)
-        for k in range(m):
-            population.ideal_Z = np.minimum(population.ideal_Z,offspring)   # minimizing
-        for j in subproblem_list[i].B:
-            if g_te(offspring,subproblem_list[j].lambda, population.ideal_Z) <= g_te(subproblem_list[j].cur_solution,subproblem_list[j].lambda, population.ideal_Z):
-                subproblem_list[j].cur_solution = offspring
-        EP = pop_dom_check_update(EP, offspring)
-        
+        parent1 = subproblem_list[parents[0]].cur_solution
+        parent2 = subproblem_list[parents[1]].cur_solution
+        offspring = parent1.crossover_operator(parent2)         #Genetic Operators
+        #offspring.mutation_operator(0.02, 0.5) # Needs repair kit to be implemented
+        #offspring = repair(offspring)
 
-            
-            
-            
-            
-            
-            
-       
-        
-        
+        ideal_Z = np.minimum(ideal_Z,offspring.objective_val)   # minimizing
+        for j in subproblem_list[i].B:
+            if g_te(offspring,subproblem_list[j].lam, ideal_Z) <= g_te(subproblem_list[j].cur_solution, subproblem_list[j].lam, ideal_Z):
+                subproblem_list[j].cur_solution = offspring
+        EP = dominance_check.remove_newly_dominated_solutions(EP, offspring, objective_sense='min')
+        EP = dominance_check.add_if_not_dominated(offspring, EP, objective_sense='min')
+
+print(EP[0].objective_val[0])
+
+plt.figure()
+
+Z1 = [es.objective_val[0] for es in EP]
+Z2 = [es.objective_val[1] for es in EP]
+print('hello')
+plt.scatter(Z1, Z2)
+print(';)')
+plt.show()

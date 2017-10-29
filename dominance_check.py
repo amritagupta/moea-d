@@ -13,7 +13,7 @@ def remove_newly_dominated_solutions(EP, offspring, objective_sense='min'):
 	for es in EP:
 		es_dominated_by_offspring = False
 		if objective_sense == 'min':
-			if np.greater_equal(es.objective_val, offspring.objective_val) and not np.equal(es.objective_val, offspring.objective_val):
+			if np.greater_equal(es.objective_val, offspring.objective_val).all() and not np.equal(es.objective_val, offspring.objective_val).all():
 				es_dominated_by_offspring = True
 		elif objective_sense == 'max':
 			if np.less_equal(es.objective_val, offspring.objective_val) and not np.equal(es.objective_val, offspring.objective_val):
@@ -34,13 +34,14 @@ def add_if_not_dominated(offspring, EP, objective_sense='min'):
 	offspring_dominated_by_EP = False
 	for es in EP:
 		if objective_sense == 'min':
-			if np.less_equal(es.objective_val, offspring.objective_val) and not np.equal(es.objective_val, offspring.objective_val):
+			if np.less_equal(es.objective_val, offspring.objective_val).all() and not np.equal(es.objective_val, offspring.objective_val).all():
 				offspring_dominated_by_EP = True
 		elif objective_sense == 'max':
-			if np.greater_equal(es.objective_val, offspring.objective_val) and not np.equal(es.objective_val, offspring.objective_val):
+			if np.greater_equal(es.objective_val, offspring.objective_val).all() and not np.equal(es.objective_val, offspring.objective_val).all():
 				offspring_dominated_by_EP = True
 		else:
 			raise ValueError('Objective sense should be either "min" or "max".')
 	if not offspring_dominated_by_EP:
 		EP.append(offspring)
 	return EP
+

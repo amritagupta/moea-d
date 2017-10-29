@@ -3,6 +3,7 @@
 This module defines objects related to the population in the MOEA/D genetic algorithm.
 """
 import numpy as np
+import g_te
 import random
 
 class Solution(object):
@@ -31,6 +32,7 @@ class Solution(object):
 		self.feasible = False
 		self.objective_val = None
 		self.x = [None]*n_dim
+		self.num_type = num_type
 
 		if not len(num_type) == n_dim:
 			raise ValueError('The number of dimensions does not match the length of the numeric type specification.')
@@ -110,9 +112,18 @@ class Solution(object):
 
 		evolution = self
 		for dimension in range(0, self.n_dim - 1):
-			change = np.random.binomial(1, frequency_of_change)
-			if change == 1:
-				evolution.x[dimension] = self.x[dimension] + np.random.uniform(-1, 1)*amplitude_of_change
+			if self.num_type[dimension] == 'Continuous':
+				change = np.random.binomial(1, frequency_of_change)
+				if change == 1:
+					evolution.x[dimension] = self.x[dimension] + np.random.uniform(-1, 1)*amplitude_of_change
+			elif self.num_type[dimension] == 'Binary':
+				change = np.random.binomial(1, frequency_of_change)
+				if change == 1:
+					if self.x[dimension] == 1:
+						evolution.x[dimension] = 0
+					elif self.x[dimension] == 0:
+						evolution.x[dimension] = 1
+
 
 		return evolution
 
