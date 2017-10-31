@@ -10,7 +10,7 @@ from g_te import g_te
 from lambda_gen import lambda_gen
 from lam_nbd import lam_nbd
 from SubProblem import *
-import solution
+import Solution
 import dominance_check
 #PARAMETERS_______________________
 
@@ -22,23 +22,23 @@ B = lam_nbd(lam)
 N = len(lam)
 subproblem_list = []
 for i in range(N):
-    temp_sol = solution.Solution(n,['Continuous']*n,i)
+    temp_sol = Solution.Solution(n,['Continuous']*n,i)
     while not temp_sol.feasible:
-        temp_sol = solution.Solution(n, ['Continuous'] * n, i)
+        temp_sol = Solution.Solution(n, ['Continuous'] * n, i)
     temp_sub = SubProblem(i,lam[i,:],B[i,:],temp_sol)
     subproblem_list.append(temp_sub)
     
 list_of_solution = [subprob.cur_solution for subprob in subproblem_list]
 ideal_Z  = [None] * m
-for solution in list_of_solution:
-    for obj_dim in range(len(solution.objective_val)):
+for sol in list_of_solution:
+    for obj_dim in range(len(sol.objective_val)):
         if ideal_Z[obj_dim] == None:
-            ideal_Z[obj_dim] = solution.objective_val[obj_dim]
-        if solution.objective_val[obj_dim] < ideal_Z[obj_dim]:   #minimizing
-            ideal_Z[obj_dim] = solution.objective_val[obj_dim]
+            ideal_Z[obj_dim] = sol.objective_val[obj_dim]
+        if sol.objective_val[obj_dim] < ideal_Z[obj_dim]:   #minimizing
+            ideal_Z[obj_dim] = sol.objective_val[obj_dim]
 
 EP = []
-MAXGEN = 2500
+MAXGEN = 250
 for generation in range(MAXGEN):
     if generation%20 == 0:
         print(generation)
