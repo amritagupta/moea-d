@@ -3,7 +3,6 @@
 This module defines objects related to the population in the MOEA/D genetic algorithm.
 """
 import numpy as np
-import g_te
 import random
 
 class Solution(object):
@@ -85,12 +84,14 @@ class Solution(object):
 
 		return solution_feasible
 
-	def crossover_operator(self, solution2):
+	def crossover_operator(self, solution2, generation):
 
 		crossover_point = random.choice(range(1, self.n_dim - 1))
 
 		new_solution1 = Solution(self.n_dim, self.num_type, self.subproblem)
 		new_solution2 = Solution(self.n_dim, self.num_type, self.subproblem)
+		new_solution1.generation = generation
+		new_solution2.generation = generation
 
 		for dimension in range(0, self.n_dim - 1):
 			if dimension < crossover_point:

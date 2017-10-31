@@ -13,12 +13,16 @@ plt.style.use('ggplot')
 from utils import *
 from subproblem import *
 import solution
-# import dominance_check
 
-######## MOEA/D Parameters ########
+
+########## MOEA/D + RUNTIME PARAMETERS ##########
 T = 10      # number of neighbors
 n = 30      # ??
 m = 2       # number of objectives
+MAXGEN = 500
+verbose = True
+
+################ INITIALIZATION ################
 lam = generate_lambda_vectors(m)
 B = get_lambda_neighborhoods(lam)
 N = len(lam)
@@ -29,7 +33,7 @@ for i in range(N):
         temp_sol = solution.Solution(n, ['Continuous'] * n, i)
     temp_sub = SubProblem(i,lam[i,:],B[i,:],temp_sol)
     subproblem_list.append(temp_sub)
-    
+
 list_of_solution = [subprob.cur_solution for subprob in subproblem_list]
 ideal_Z  = [None] * m
 for sol in list_of_solution:
@@ -39,16 +43,18 @@ for sol in list_of_solution:
         if sol.objective_val[obj_dim] < ideal_Z[obj_dim]:   #minimizing
             ideal_Z[obj_dim] = sol.objective_val[obj_dim]
 
+
+########## BEGIN EVOLUTIONARY ALGORITHM ##########
+
 EP = []
-MAXGEN = 250
 for generation in range(MAXGEN):
-    if generation%20 == 0:
+    if verbose and generation%20 == 0:
         print(generation)
     for i in range(N): # for each subproblem
         parents = np.random.choice(subproblem_list[i].B,2,replace = False)
         parent1 = subproblem_list[parents[0]].cur_solution
         parent2 = subproblem_list[parents[1]].cur_solution
-        offspring = parent1.crossover_operator(parent2)         #Genetic Operators
+        offspring = parent1.crossover_operator(parent2, generation)         #Genetic Operators
         #offspring.mutation_operator(0.02, 0.5) # Needs repair kit to be implemented
         #offspring = repair(offspring)
 
@@ -59,13 +65,16 @@ for generation in range(MAXGEN):
         EP = remove_newly_dominated_solutions(EP, offspring, objective_sense='min')
         EP = add_if_not_dominated(offspring, EP, objective_sense='min')
 
-print(EP[0].objective_val[0])
+    if generation%50 == 0:
+        Z1 = [es.objective_val[0] for es in EP]
+        Z2 = [es.objective_val[1] for es in EP]
+        es_generation = [es.generation for es in EP]
+        plt.scatter(Z1, Z2, c=es_generation, cmap=plt.cm.RdYlGn, s=50)
 
-plt.figure()
+        plot_z1 = np.arange(min(Z1),max(Z1), 0.1)
+        plot_z2 = [1 - np.sqrt(z1val) for z1val in plot_z1]
+        plt.plot(plot_z1, plot_z2)
+        plt.ylim(ymax=7)
+        plt.xlim(xmax=1.2)
 
-Z1 = [es.objective_val[0] for es in EP]
-Z2 = [es.objective_val[1] for es in EP]
-print('hello')
-plt.scatter(Z1, Z2)
-print(';)')
-plt.show()
+        plt.savefig('generation%s.png'%generation)
