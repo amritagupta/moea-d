@@ -127,8 +127,3 @@ class Solution(object):
 
 		return evolution
 
-
-
-### Test Area
-sol = Solution(30, ['Continuous']*30, 2)
-

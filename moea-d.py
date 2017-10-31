@@ -1,30 +1,32 @@
 #!/opt/python/bin/python
 
+"""
+A script for solving multi-objective optimization problems using an evolutionary algorithm.
+Does not currently support reading LP files.
+"""
+
 import random
 import numpy as np
-from numpy.random import choice
 import matplotlib.pyplot as plt
 plt.style.use('ggplot')
 
-from g_te import g_te
-from lambda_gen import lambda_gen
-from lam_nbd import lam_nbd
-from SubProblem import *
-import Solution
-import dominance_check
-#PARAMETERS_______________________
+from utils import *
+from subproblem import *
+import solution
+# import dominance_check
 
-T = 10 # number of neighbors
-n = 30
-m = 2
-lam = lambda_gen(m,n)
-B = lam_nbd(lam)
+######## MOEA/D Parameters ########
+T = 10      # number of neighbors
+n = 30      # ??
+m = 2       # number of objectives
+lam = generate_lambda_vectors(m)
+B = get_lambda_neighborhoods(lam)
 N = len(lam)
 subproblem_list = []
 for i in range(N):
-    temp_sol = Solution.Solution(n,['Continuous']*n,i)
+    temp_sol = solution.Solution(n,['Continuous']*n,i)
     while not temp_sol.feasible:
-        temp_sol = Solution.Solution(n, ['Continuous'] * n, i)
+        temp_sol = solution.Solution(n, ['Continuous'] * n, i)
     temp_sub = SubProblem(i,lam[i,:],B[i,:],temp_sol)
     subproblem_list.append(temp_sub)
     
@@ -54,8 +56,8 @@ for generation in range(MAXGEN):
         for j in subproblem_list[i].B:
             if g_te(offspring,subproblem_list[j].lam, ideal_Z) <= g_te(subproblem_list[j].cur_solution, subproblem_list[j].lam, ideal_Z):
                 subproblem_list[j].cur_solution = offspring
-        EP = dominance_check.remove_newly_dominated_solutions(EP, offspring, objective_sense='min')
-        EP = dominance_check.add_if_not_dominated(offspring, EP, objective_sense='min')
+        EP = remove_newly_dominated_solutions(EP, offspring, objective_sense='min')
+        EP = add_if_not_dominated(offspring, EP, objective_sense='min')
 
 print(EP[0].objective_val[0])
 
