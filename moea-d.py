@@ -1,19 +1,12 @@
 #!/opt/python/bin/python
 
-from __future__ import print_function
-import sys
-print(sys.argv)
-import os
-import csv
-import time
 import random
-from g_te import g_te
 import numpy as np
 from numpy.random import choice
-from sklearn.neighbors import NearestNeighbors
 import matplotlib.pyplot as plt
 plt.style.use('ggplot')
 
+from g_te import g_te
 from lambda_gen import lambda_gen
 from lam_nbd import lam_nbd
 from SubProblem import *
