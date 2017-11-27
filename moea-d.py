@@ -57,7 +57,7 @@ for generation in range(MAXGEN):
         offsprings = parent1.crossover_operator(parent2, generation)         #Genetic Operators
         offspring = offsprings[0].give_the_best_of(offsprings[1], subproblem_list[i].lam, ideal_Z)
 
-        offspring.mutation_operator2(0.1)
+        offspring.mutation_operator2(0.03)
         # check feasibility
         #offspring = repair(offspring)
 
