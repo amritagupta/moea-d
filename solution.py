@@ -4,6 +4,7 @@ This module defines objects related to the population in the MOEA/D genetic algo
 """
 import numpy as np
 import random
+import utils as utils
 
 class Solution(object):
 	"""
@@ -85,7 +86,9 @@ class Solution(object):
 		return solution_feasible
 
 	def crossover_operator(self, solution2, generation):
-
+		"""
+		Do cross over operations on 2 parents, choosing the best child with the g function
+		"""
 		crossover_point = random.choice(range(1, self.n_dim - 1))
 
 		new_solution1 = Solution(self.n_dim, self.num_type, self.subproblem)
@@ -101,16 +104,36 @@ class Solution(object):
 				new_solution1.x[dimension] = solution2.x[dimension]
 				new_solution2.x[dimension] = self.x[dimension]
 
-		child_choice = random.choice(range(1,2))
-		if child_choice == 1:
-			child = new_solution1
-		elif child_choice == 2:
-			child = new_solution2
+		# One should never have to choose between his child..
+		#child_choice = random.choice(range(1,2))
+		#if child_choice == 1:
+		#	child = new_solution1
+		#elif child_choice == 2:
+		#	child = new_solution2
 
-		return child
+		offsprings = [new_solution1, new_solution2]
+
+		return offsprings
+
+	def give_the_best_of(self, solution2, lambda_sub, ideal_z):
+		"""
+		Compare 2 solutions wiht the gte function and return the ebst (the lowest)
+		"""
+		grade1 = utils.g_te(self,lambda_sub, ideal_z)
+		grade2 = utils.g_te(solution2,lambda_sub, ideal_z)
+
+		if grade1 < grade2:
+			best = grade1
+
+		else:
+			best = grade2
+
+		return best
 
 	def mutation_operator1(self):
-
+		"""
+		Do mutation operation on a solution
+		"""
 		evolution = self
 		mutated_dimension = np.random.randint(1, self.n_dim - 1)
 
@@ -126,7 +149,9 @@ class Solution(object):
 		return evolution
 
 	def mutation_operator2(self, frequency_of_change):
-
+		"""
+		Do mutation operation on a solution
+		"""
 		evolution = self
 
 		for dimension in range(0, self.n_dim - 1):
