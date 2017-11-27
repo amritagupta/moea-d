@@ -159,7 +159,7 @@ class Solution(object):
 			if self.num_type[dimension] == 'Continuous':
 				change = np.random.binomial(1, frequency_of_change)
 				if change == 1:
-					print(self.x[dimension])
+					#print(self.x[dimension])
 					evolution.x[dimension] = self.x[dimension] + np.random.normal(0, self.x[dimension]**2 + 1)
 
 			elif self.num_type[dimension] == 'Binary':
