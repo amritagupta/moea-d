@@ -22,7 +22,7 @@ def generate_lambda_vectors(m, H=25):
 		A list of lists, in which the ith sublist is the lambda vector characterizing
 		the ith subproblem; and each lambda vector is of length m.
 	"""
-	N = comb(H+m-1, m-1) # not convinced of this formula
+	N = int(comb(H+m-1, m-1)) # not convinced of this formula  # number of subproblems
 	lambda_vectors = np.empty([N,m])
 	possible_values = np.arange(0, 1+1/float(H), 1/float(H))
 	

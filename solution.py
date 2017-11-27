@@ -123,10 +123,10 @@ class Solution(object):
 		grade2 = utils.g_te(solution2,lambda_sub, ideal_z)
 
 		if grade1 < grade2:
-			best = grade1
+			best = self
 
 		else:
-			best = grade2
+			best = solution2
 
 		return best
 

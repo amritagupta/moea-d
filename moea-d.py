@@ -55,8 +55,8 @@ for generation in range(MAXGEN):
         parent1 = subproblem_list[parents[0]].cur_solution
         parent2 = subproblem_list[parents[1]].cur_solution
         offsprings = parent1.crossover_operator(parent2, generation)         #Genetic Operators
-        offspring = offsprings(0).give_the_best_of(offsprings(1), subproblem_list[i].lam, ideal_Z)
-        offspring.mutation_operator(0.01) # Needs repair kit to be implemented
+        offspring = offsprings[0].give_the_best_of(offsprings[1], subproblem_list[i].lam, ideal_Z)
+        offspring.mutation_operator2(0.01) # Needs repair kit to be implemented
         # check
         #offspring = repair(offspring)
 
