@@ -138,7 +138,6 @@ class Solution(object):
 		mutated_dimension = np.random.randint(1, self.n_dim - 1)
 
 		if self.num_type[mutated_dimension] == 'Continuous':
-			print(self.x[mutated_dimension])
 			evolution.x[mutated_dimension] = self.x[mutated_dimension] + np.random.normal(0, self.x[mutated_dimension]^2 + 1)
 
 		elif self.num_type[mutated_dimension] == 'Binary':
@@ -160,6 +159,7 @@ class Solution(object):
 			if self.num_type[dimension] == 'Continuous':
 				change = np.random.binomial(1, frequency_of_change)
 				if change == 1:
+					print(self.x[dimension])
 					evolution.x[dimension] = self.x[dimension] + np.random.normal(0, self.x[dimension]^2 + 1)
 
 			elif self.num_type[dimension] == 'Binary':
