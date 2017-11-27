@@ -43,7 +43,6 @@ for sol in list_of_solution:
         if sol.objective_val[obj_dim] < ideal_Z[obj_dim]:   #minimizing
             ideal_Z[obj_dim] = sol.objective_val[obj_dim]
 
-
 ########## BEGIN EVOLUTIONARY ALGORITHM ##########
 
 EP = []
@@ -54,10 +53,12 @@ for generation in range(MAXGEN):
         parents = np.random.choice(subproblem_list[i].B,2,replace = False)
         parent1 = subproblem_list[parents[0]].cur_solution
         parent2 = subproblem_list[parents[1]].cur_solution
+
         offsprings = parent1.crossover_operator(parent2, generation)         #Genetic Operators
         offspring = offsprings[0].give_the_best_of(offsprings[1], subproblem_list[i].lam, ideal_Z)
-        offspring.mutation_operator2(0.01) # Needs repair kit to be implemented
-        # check
+
+        offspring.mutation_operator2(0.1)
+        # check feasibility
         #offspring = repair(offspring)
 
         ideal_Z = np.minimum(ideal_Z,offspring.objective_val)   # minimizing

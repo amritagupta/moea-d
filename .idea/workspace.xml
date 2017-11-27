@@ -21,11 +21,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="moea-d.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="moea-d.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/moea-d.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="748">
-              <caret line="46" column="50" lean-forward="false" selection-start-line="46" selection-start-column="50" selection-end-line="46" selection-end-column="50" />
+            <state relative-caret-position="816">
+              <caret line="59" column="39" lean-forward="false" selection-start-line="59" selection-start-column="39" selection-end-line="59" selection-end-column="39" />
               <folding />
             </state>
           </provider>
@@ -43,11 +43,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="solution.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="solution.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/solution.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="869">
-              <caret line="156" column="0" lean-forward="false" selection-start-line="156" selection-start-column="0" selection-end-line="156" selection-end-column="0" />
+            <state relative-caret-position="308">
+              <caret line="132" column="33" lean-forward="true" selection-start-line="132" selection-start-column="33" selection-end-line="132" selection-end-column="33" />
               <folding>
                 <element signature="e#113#131#0" expanded="true" />
               </folding>
@@ -62,6 +62,22 @@
               <caret line="22" column="23" lean-forward="false" selection-start-line="22" selection-start-column="16" selection-end-line="22" selection-end-column="23" />
               <folding>
                 <element signature="e#147#165#0" expanded="true" />
+                <marker date="1511818262098" expanded="true" signature="280:1339" ph="..." />
+                <marker date="1511818262098" expanded="true" signature="901:1314" ph="..." />
+                <marker date="1511818262098" expanded="true" signature="1392:1967" ph="..." />
+                <marker date="1511818262098" expanded="true" signature="1394:1734" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+                <marker date="1511818262098" expanded="true" signature="2002:2479" ph="..." />
+                <marker date="1511818262098" expanded="true" signature="2004:2376" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+                <marker date="1511818262098" expanded="true" signature="2556:3467" ph="..." />
+                <marker date="1511818262098" expanded="true" signature="2558:2833" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+                <marker date="1511818262098" expanded="true" signature="2866:3445" ph="..." />
+                <marker date="1511818262098" expanded="true" signature="2933:3109" ph="..." />
+                <marker date="1511818262098" expanded="true" signature="3142:3303" ph="..." />
+                <marker date="1511818262098" expanded="true" signature="3532:4423" ph="..." />
+                <marker date="1511818262098" expanded="true" signature="3534:3809" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+                <marker date="1511818262098" expanded="true" signature="3859:4352" ph="..." />
+                <marker date="1511818262098" expanded="true" signature="3890:4063" ph="..." />
+                <marker date="1511818262098" expanded="true" signature="4096:4272" ph="..." />
               </folding>
             </state>
           </provider>
@@ -72,8 +88,8 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>g_te</find>
-      <find>Subprob</find>
       <find>subpro</find>
+      <find>Subprob</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -82,13 +98,13 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/moea-d.py" />
         <option value="$PROJECT_DIR$/population.py" />
         <option value="$PROJECT_DIR$/solution.py" />
+        <option value="$PROJECT_DIR$/moea-d.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="20" />
     <option name="y" value="-8" />
     <option name="width" value="1346" />
@@ -203,7 +219,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="3456" height="1416" extended-state="7" />
+    <frame x="-8" y="-8" width="3456" height="1416" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.0622093" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -312,6 +328,22 @@
           <caret line="22" column="23" lean-forward="false" selection-start-line="22" selection-start-column="16" selection-end-line="22" selection-end-column="23" />
           <folding>
             <element signature="e#147#165#0" expanded="true" />
+            <marker date="1511818262098" expanded="true" signature="280:1339" ph="..." />
+            <marker date="1511818262098" expanded="true" signature="901:1314" ph="..." />
+            <marker date="1511818262098" expanded="true" signature="1392:1967" ph="..." />
+            <marker date="1511818262098" expanded="true" signature="1394:1734" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1511818262098" expanded="true" signature="2002:2479" ph="..." />
+            <marker date="1511818262098" expanded="true" signature="2004:2376" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1511818262098" expanded="true" signature="2556:3467" ph="..." />
+            <marker date="1511818262098" expanded="true" signature="2558:2833" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1511818262098" expanded="true" signature="2866:3445" ph="..." />
+            <marker date="1511818262098" expanded="true" signature="2933:3109" ph="..." />
+            <marker date="1511818262098" expanded="true" signature="3142:3303" ph="..." />
+            <marker date="1511818262098" expanded="true" signature="3532:4423" ph="..." />
+            <marker date="1511818262098" expanded="true" signature="3534:3809" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1511818262098" expanded="true" signature="3859:4352" ph="..." />
+            <marker date="1511818262098" expanded="true" signature="3890:4063" ph="..." />
+            <marker date="1511818262098" expanded="true" signature="4096:4272" ph="..." />
           </folding>
         </state>
       </provider>
@@ -334,21 +366,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/moea-d.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="748">
-          <caret line="46" column="50" lean-forward="false" selection-start-line="46" selection-start-column="50" selection-end-line="46" selection-end-column="50" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/solution.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="869">
-          <caret line="156" column="0" lean-forward="false" selection-start-line="156" selection-start-column="0" selection-end-line="156" selection-end-column="0" />
+        <state relative-caret-position="308">
+          <caret line="132" column="33" lean-forward="true" selection-start-line="132" selection-start-column="33" selection-end-line="132" selection-end-column="33" />
           <folding>
             <element signature="e#113#131#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/moea-d.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="816">
+          <caret line="59" column="39" lean-forward="false" selection-start-line="59" selection-start-column="39" selection-end-line="59" selection-end-column="39" />
+          <folding />
         </state>
       </provider>
     </entry>
