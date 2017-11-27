@@ -171,7 +171,20 @@ class Solution(object):
 						evolution.x[dimension] = 1
 
 		return evolution
- def repair_child(self, w, c):
-   m = len(self.objective_val)
-   J = [j if self.x[j]==1 for j in range(self.n_dim)]
-   I = [i if sum(w[i,j]*self.x[j] for i in range(n_dim))>c[i] for i in range(m)]
+      def repair_child(self, w, c, lambda_sub, ideal_z):
+         m = len(self.objective_val)
+         J = [j if self.x[j]==1 for j in range(self.n_dim)]
+         I = [i if sum(w[i,j]*self.x[j] for i in range(n_dim))>c[i] for i in range(m)]
+         Qstar = 100000000
+         for j in J:
+            x_j_minus = self.x
+            x_j_minus[j] = 0 # not 1
+            Q =  (-g_te(self.x, lambda_sub, ideal_z) + g_te(x_j_minus, lambda_sub, ideal_z))
+            if Qstar > Q:
+               Qstar = Q
+               kmin = j
+         x_j_greedy = self.x
+         x_j_greedy[kmin] = 0
+         return x_j_greedy
+
+
