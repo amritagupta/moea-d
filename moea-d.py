@@ -76,7 +76,7 @@ for generation in range(MAXGEN):
         plt.scatter(Z1, Z2, c=es_generation, cmap=plt.cm.RdYlGn, s=50)
 
         plot_z1 = np.arange(min(Z1),max(Z1), 0.1)   #f1value
-        plot_z2 = [1 - np.sqrt(z1val/g_ZDT1 for z1val in plot_z1]
+        plot_z2 = [1 - np.sqrt(z1val) for z1val in plot_z1]
         plt.plot(plot_z1, plot_z2)
         plt.ylim(ymax=7)
         plt.xlim(xmax=1.2)
