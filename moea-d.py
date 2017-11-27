@@ -63,8 +63,8 @@ for generation in range(MAXGEN):
 
         ideal_Z = np.minimum(ideal_Z,offspring.objective_val)   # minimizing
         for j in subproblem_list[i].B:
-            if g_te(offspring,subproblem_list[j].lam, ideal_Z) <= g_te(subproblem_list[j].cur_solution, subproblem_list[j].lam, ideal_Z):
-                subproblem_list[j].cur_solution = offspring
+                subproblem_list[j].cur_solution = subproblem_list[j].cur_solution.give_the_best_of(offspring, subproblem_list[i].lam, ideal_Z)
+
         EP = remove_newly_dominated_solutions(EP, offspring, objective_sense='min')
         EP = add_if_not_dominated(offspring, EP, objective_sense='min')
 
