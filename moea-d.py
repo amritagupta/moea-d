@@ -57,14 +57,15 @@ for generation in range(MAXGEN):
         offsprings = parent1.crossover_operator(parent2, generation)         #Genetic Operators
         offspring = offsprings[0].give_the_best_of(offsprings[1], subproblem_list[i].lam, ideal_Z)
 
-        offspring.mutation_operator2(0.03)
+        offspring.mutation_operator2(0.1)
         # check feasibility
         #offspring = repair(offspring)
 
         ideal_Z = np.minimum(ideal_Z,offspring.objective_val)   # minimizing
         for j in subproblem_list[i].B:
-                subproblem_list[j].cur_solution = subproblem_list[j].cur_solution.give_the_best_of(offspring, subproblem_list[i].lam, ideal_Z)
-
+            subproblem_list[j].cur_solution = subproblem_list[j].cur_solution.give_the_best_of(offspring,
+                                                                                               subproblem_list[j].lam,
+                                                                                               ideal_Z)
         EP = remove_newly_dominated_solutions(EP, offspring, objective_sense='min')
         EP = add_if_not_dominated(offspring, EP, objective_sense='min')
 
