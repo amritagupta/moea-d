@@ -115,7 +115,7 @@ class Solution(object):
 		mutated_dimension = np.random.randint(1, self.n_dim - 1)
 
 		if self.num_type[mutated_dimension] == 'Continuous':
-			evolution.x[mutated_dimension] = self.x[mutated_dimension] + np.random.uniform(-1, 1)
+			evolution.x[mutated_dimension] = self.x[mutated_dimension] + np.random.normal(0, self.x[mutated_dimension]^2 + 1)
 
 		elif self.num_type[mutated_dimension] == 'Binary':
 			if self.x[mutated_dimension] == 1:
@@ -126,7 +126,7 @@ class Solution(object):
 		return evolution
 
 	def mutation_operator2(self, frequency_of_change):
-		
+
 		evolution = self
 
 		for dimension in range(0, self.n_dim - 1):
@@ -134,7 +134,7 @@ class Solution(object):
 			if self.num_type[dimension] == 'Continuous':
 				change = np.random.binomial(1, frequency_of_change)
 				if change == 1:
-					evolution.x[dimension] = self.x[dimension] + np.random.uniform(-1, 1)
+					evolution.x[dimension] = self.x[dimension] + np.random.normal(0, self.x[dimension]^2 + 1)
 
 			elif self.num_type[dimension] == 'Binary':
 				change = np.random.binomial(1, frequency_of_change)
@@ -145,5 +145,3 @@ class Solution(object):
 						evolution.x[dimension] = 1
 
 		return evolution
-
-
