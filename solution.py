@@ -172,7 +172,7 @@ class Solution(object):
 
 		return evolution
 
-	def repair_child(self, w, c, lambda_sub, ideal_z):
+	def repair_child_MOKP(self, w, c, lambda_sub, ideal_z):
 
 		m = len(self.objective_val)
 		J = [j for j in range(self.n_dim) if self.x[j]==1]
@@ -182,7 +182,7 @@ class Solution(object):
 		for j in J:
 			x_j_minus = self.x
 			x_j_minus[j] = 0 # not 1
-			Q =  (utils.g_te(self.x, lambda_sub, ideal_z) + utils.g_te(x_j_minus, lambda_sub, ideal_z))
+			Q =  (- utils.g_te(self.x, lambda_sub, ideal_z) + utils.g_te(x_j_minus, lambda_sub, ideal_z))/ sum(w[i,j] for i in I)
 
 			if Qstar > Q:
 				Qstar = Q
