@@ -171,7 +171,7 @@ class Solution(object):
 						evolution.x[dimension] = 1
 
 		return evolution
-    def repair_child(self, w, c):
-        m = len(self.objective_val)
-        J = [j if self.x[j]==1 for j in range(self.n_dim)]
-        I = [i if or i in range(m)]
+ def repair_child(self, w, c):
+   m = len(self.objective_val)
+   J = [j if self.x[j]==1 for j in range(self.n_dim)]
+   I = [i if sum(w[i,j]*self.x[j] for i in range(n_dim))>c[i] for i in range(m)]
