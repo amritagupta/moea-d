@@ -160,7 +160,7 @@ class Solution(object):
 				change = np.random.binomial(1, frequency_of_change)
 				if change == 1:
 					#print(self.x[dimension])
-					evolution.x[dimension] = self.x[dimension] + np.random.normal(0, self.x[dimension]**2 + 1)
+					evolution.x[dimension] = self.x[dimension] + np.random.normal(0, (self.x[dimension]**2)/100)
 
 			elif self.num_type[dimension] == 'Binary':
 				change = np.random.binomial(1, frequency_of_change)

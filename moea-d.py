@@ -25,7 +25,7 @@ verbose = True
 ################ INITIALIZATION ################
 lam = generate_lambda_vectors(m)
 B = get_lambda_neighborhoods(lam)
-N = len(lam)
+N = len(lam) # number of subproblems
 subproblem_list = []
 for i in range(N):
     temp_sol = solution.Solution(n,['Continuous']*n,i)
@@ -61,7 +61,7 @@ for generation in range(MAXGEN):
         # check feasibility
         #offspring = repair(offspring)
 
-        ideal_Z = np.minimum(ideal_Z,offspring.objective_val)   # minimizing
+        ideal_Z = np.minimum(ideal_Z,offspring.objective_val)   # minimizing element-wise
         for j in subproblem_list[i].B:
             subproblem_list[j].cur_solution = subproblem_list[j].cur_solution.give_the_best_of(offspring,
                                                                                                subproblem_list[j].lam,
@@ -79,7 +79,7 @@ for generation in range(MAXGEN):
         plot_z1 = np.arange(min(Z1),max(Z1), 0.1)   #f1value
         plot_z2 = [1 - np.sqrt(z1val) for z1val in plot_z1]
         plt.plot(plot_z1, plot_z2)
-        plt.ylim(ymax=7)
+        plt.ylim(ymax=6)
         plt.xlim(xmax=1.2)
 
         plt.savefig('generation%s.png'%generation)
