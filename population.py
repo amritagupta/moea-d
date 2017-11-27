@@ -2,7 +2,7 @@
 
 
 import solution.py
-import SubProblem.py
+import subproblem as subproblem
 import lam_nbd.py
 
 class Population(object):
@@ -13,7 +13,7 @@ class Population(object):
     ideal_Z : Ideal point of the solutions
     """
 
-    def _init_(self, number_of_solution, list_of_subporblems):
+    def _init_(self, number_of_solution, list_of_subproblems):
 
         """
         :param number_of_solution: The size of the population, how many solutions it will contain
@@ -24,8 +24,8 @@ class Population(object):
 
         self.number_of_solution = number_of_solution
 
-        for subproblem in list_of_subporblems:
-            sol = SubProblem.cur_solution
+        for subproblem in list_of_subproblems:
+            sol = subproblem.cur_solution
             self.list_of_solutions.append(sol)
 
         self.ideal_Z = self.compute_ideal_z(self.list_of_solution)
@@ -51,5 +51,4 @@ class Population(object):
 
         return ideal_Z
 
-    Solution(30, ['Con'])
 
