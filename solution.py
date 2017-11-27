@@ -109,22 +109,19 @@ class Solution(object):
 
 		return child
 
-	def mutation_operator(self, frequency_of_change, amplitude_of_change):
+	def mutation_operator(self):
 
 		evolution = self
-		for dimension in range(0, self.n_dim - 1):
-			if self.num_type[dimension] == 'Continuous':
-				change = np.random.binomial(1, frequency_of_change)
-				if change == 1:
-					evolution.x[dimension] = self.x[dimension] + np.random.uniform(-1, 1)*amplitude_of_change
-			elif self.num_type[dimension] == 'Binary':
-				change = np.random.binomial(1, frequency_of_change)
-				if change == 1:
-					if self.x[dimension] == 1:
-						evolution.x[dimension] = 0
-					elif self.x[dimension] == 0:
-						evolution.x[dimension] = 1
+		mutated_dimension = np.random.randint(1, self.n_dim - 1)
 
+		if self.num_type[mutated_dimension] == 'Continuous':
+			evolution.x[mutated_dimension] = self.x[mutated_dimension] + np.random.uniform(-1, 1)
+
+		elif self.num_type[mutated_dimension] == 'Binary':
+			if self.x[mutated_dimension] == 1:
+				evolution.x[mutated_dimension] = 0
+			elif self.x[mutated_dimension] == 0:
+				evolution.x[mutated_dimension] = 1
 
 		return evolution
 
