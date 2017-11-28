@@ -149,19 +149,3 @@ def repair(solution, previous_solution, optimization_problem):
             break
 
    return repaired_solution
-
-
-
-
-        offsprings = parent1.crossover_operator(parent2, generation)         #Genetic Operators
-        offspring = offsprings[0].give_the_best_of(offsprings[1], subproblem_list[i].lam, ideal_Z)
-
-        mutated_offspring = offspring.mutation_operator2(0.1)
-
-        if not mutated_offspring.check_feasible(optimization_problem):
-           for i in range(3):
-              mutated_offspring = repair(mutated_offspring, offspring, optimization_problem)
-              break
-
-         if mutated_offspring.check_feasible(optimization_problem):
-            offspring = mutated_offspring

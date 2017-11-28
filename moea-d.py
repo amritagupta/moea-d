@@ -56,9 +56,14 @@ for generation in range(MAXGEN):
         offsprings = parent1.crossover_operator(parent2, generation, 'ZDT1')         #Genetic Operators
         offspring = offsprings[0].give_the_best_of(offsprings[1], subproblem_list[i].lam, ideal_Z)
 
-        offspring.mutation_operator2(0.1)
-        # check feasibility
-        #offspring = repair(offspring)
+        mutated_offspring = offspring.mutation_operator2(0.1)
+
+        if not mutated_offspring.check_feasible(optimization_problem):
+            for i in range(3):
+                mutated_offspring = repair(mutated_offspring, offspring, optimization_problem)
+                if mutated_offspring.check_feasible(optimization_problem):
+                    offspring = mutated_offspring
+                    break
 
         ideal_Z = np.minimum(ideal_Z,offspring.objective_val)   # minimizing element-wise
         for j in subproblem_list[i].B:
