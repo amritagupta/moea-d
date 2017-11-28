@@ -125,6 +125,7 @@ def add_if_not_dominated(offspring, EP, objective_sense='min'):
 def repair(solution, previous_solution, optimization_problem):
 
    fixed_solution = solution
+   repaired_solution = 0
 
    for i in len(solution.x):
       # binary
@@ -136,6 +137,7 @@ def repair(solution, previous_solution, optimization_problem):
                fixed_solution.x[i] = 1
 
          if fixed_solution.solution.check_feasible(optimization_problem):
+            repaired_solution = fixed_solution
             break
 
       elif binary[i] == 0:
@@ -143,8 +145,23 @@ def repair(solution, previous_solution, optimization_problem):
             fixed_solution.x[i] = (solution.x[i]+ fixed_solution.x[i])/2
 
           if fixed_solution.solution.check_feasible(optimization_problem):
+            repaired_solution = fixed_solution
             break
 
-   return fixed_solution
+   return repaired_solution
 
 
+
+
+        offsprings = parent1.crossover_operator(parent2, generation)         #Genetic Operators
+        offspring = offsprings[0].give_the_best_of(offsprings[1], subproblem_list[i].lam, ideal_Z)
+
+        mutated_offspring = offspring.mutation_operator2(0.1)
+
+        if not mutated_offspring.check_feasible(optimization_problem):
+           for i in range(3):
+              mutated_offspring = repair(mutated_offspring, offspring, optimization_problem)
+              break
+
+         if mutated_offspring.check_feasible(optimization_problem):
+            offspring = mutated_offspring
