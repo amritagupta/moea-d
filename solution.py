@@ -149,6 +149,10 @@ class Solution(object):
 				new_solution1.x[dimension] = solution2.x[dimension]
 				new_solution2.x[dimension] = self.x[dimension]
 
+		new_solution1.objective_val = new_solution1.evaluate_solution(optimization_problem)
+		new_solution2.objective_val = new_solution2.evaluate_solution(optimization_problem)
+		new_solution1.feasible = new_solution1.check_feasible(optimization_problem)
+		new_solution2.feasible = new_solution2.check_feasible(optimization_problem)
 		# One should never have to choose between his child..
 		#child_choice = random.choice(range(1,2))
 		#if child_choice == 1:
@@ -193,19 +197,18 @@ class Solution(object):
 
 		return evolution
 
-	def mutation_operator2(self, frequency_of_change):
+	def mutation_operator2(self, frequency_of_change, optimization_problem):
 		"""
 		Do mutation operation on a solution
 		"""
 		evolution = self
 
-		for dimension in range(0, self.n_dim - 1):
-
+		for dimension in range(0, self.n_dim):
 			if self.num_type[dimension] == 0: # Continuous
 				change = np.random.binomial(1, frequency_of_change)
 				if change == 1:
 					#print(self.x[dimension])
-					evolution.x[dimension] = self.x[dimension] + np.random.normal(0, (self.x[dimension]**2)/100)
+					evolution.x[dimension] = np.random.uniform(0, 1) #evolution.x[dimension] + np.random.normal(0, (self.x[dimension]**2)/100)#
 
 			elif self.num_type[dimension] == 1: # Binary
 				change = np.random.binomial(1, frequency_of_change)
@@ -215,6 +218,8 @@ class Solution(object):
 					elif self.x[dimension] == 0:
 						evolution.x[dimension] = 1
 
+		evolution.objective_val = evolution.evaluate_solution(optimization_problem)
+		evolution.feasible = evolution.check_feasible(optimization_problem)
 		return evolution
 
 	def repair_child_MOKP(self, w, c, lambda_sub, ideal_z):

@@ -57,16 +57,18 @@ for generation in range(MAXGEN):
         offsprings = parent1.crossover_operator(parent2, generation, optimization_problem)         #Genetic Operators
         offspring = offsprings[0].give_the_best_of(offsprings[1], subproblem_list[i].lam, ideal_Z)
 
-        mutated_offspring = offspring.mutation_operator2(0.1)
+        mutated_offspring = offspring.mutation_operator2(0.1, optimization_problem)
 
-        if not mutated_offspring.check_feasible(optimization_problem):
-            for i in range(3):
+        if not mutated_offspring.feasible:
+            for mc in range(3):
                 mutated_offspring = repair(mutated_offspring, offspring, optimization_problem)
                 if mutated_offspring.check_feasible(optimization_problem):
                     offspring = mutated_offspring
+                    offspring.objective_val = offspring.evaluate_solution(optimization_problem)
                     break
 
         ideal_Z = np.minimum(ideal_Z,offspring.objective_val)   # minimizing element-wise
+
         for j in subproblem_list[i].B:
             subproblem_list[j].cur_solution = subproblem_list[j].cur_solution.give_the_best_of(offspring,
                                                                                                subproblem_list[j].lam,
@@ -77,6 +79,8 @@ for generation in range(MAXGEN):
     if generation%50 == 0:
         Z1 = [es.objective_val[0] for es in EP]
         Z2 = [es.objective_val[1] for es in EP]
+        print Z1
+        print Z2
         x_vector = [es.x for es in EP]
         es_generation = [es.generation for es in EP]
         plt.scatter(Z1, Z2, c=es_generation, cmap=plt.cm.RdYlGn, s=50)
@@ -84,7 +88,7 @@ for generation in range(MAXGEN):
         plot_z1 = np.arange(min(Z1),max(Z1), 0.1)   #f1value
         plot_z2 = [1 - np.sqrt(z1val) for z1val in plot_z1]
         plt.plot(plot_z1, plot_z2)
-        plt.ylim(ymax=6)
-        plt.xlim(xmax=1.2)
+        plt.ylim(ymin=0,ymax=6)
+        plt.xlim(xmin=0,xmax=1.2)
 
         plt.savefig('generation%s.png'%generation)
