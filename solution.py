@@ -19,7 +19,7 @@ class Solution(object):
 		feasible: Whether or not the solution is feasible.
 		objective_val: The value of the solution in objective space.
 	"""
-	def __init__(self, n_dim, subproblem, optimization_problem):
+	def __init__(self, subproblem, optimization_problem):
 		"""
 		Construct a new 'Solution' instance by random generation.
 		:param n_dim: The number of dimensions the solution has.
@@ -27,26 +27,31 @@ class Solution(object):
 		:param subproblem: The subproblem number to which it is a solution.
 		"""
 		super(Solution, self).__init__()
-		self.n_dim = n_dim
+		if optimization_problem == 'ZDT1':
+			self.n_dim = 30
+		else:
+			opt_params = read_input(optimization_problem)
+			lb = opt_params[3]
+			self.n_dim = len(lb)
 		self.generation = 1
 		self.subproblem = subproblem
 		self.feasible = False
 		self.objective_val = None
-		self.x = [None]*n_dim
+		self.x = [None]*self.n_dim
 		if optimization_problem == 'ZDT1':
-			self.num_type = [0]*n_dim
+			self.num_type = [0]*self.n_dim
 		else:
 			opt_params = read_input(optimization_problem)
 			self.num_type = opt_params[5]
 
-		if not len(num_type) == n_dim:
+		if not len(self.num_type) == self.n_dim:
 			raise ValueError('The number of dimensions does not match the length of the numeric type specification.')
 
-		for i in range(n_dim):
-			if num_type[i] == 1:
+		for i in range(self.n_dim):
+			if self.num_type[i] == 1:
 				# generate 0 or 1
 				self.x[i] = np.random.randint(2)
-			elif num_type[i] == 0:
+			elif self.num_type[i] == 0:
 				# generate random real number between 0 and 1
 				self.x[i] = np.random.uniform()
 
@@ -125,14 +130,14 @@ class Solution(object):
 
 		return solution_feasible
 
-	def crossover_operator(self, solution2, generation):
+	def crossover_operator(self, solution2, generation, optimization_problem):
 		"""
 		Do cross over operations on 2 parents, choosing the best child with the g function
 		"""
 		crossover_point = random.choice(range(1, self.n_dim - 1))
 
-		new_solution1 = Solution(self.n_dim, self.num_type, self.subproblem)
-		new_solution2 = Solution(self.n_dim, self.num_type, self.subproblem)
+		new_solution1 = Solution(self.subproblem, optimization_problem)
+		new_solution2 = Solution(self.subproblem, optimization_problem)
 		new_solution1.generation = generation
 		new_solution2.generation = generation
 

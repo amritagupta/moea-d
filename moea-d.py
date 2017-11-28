@@ -14,7 +14,6 @@ from utils import *
 from subproblem import *
 import solution
 
-
 ########## MOEA/D + RUNTIME PARAMETERS ##########
 T = 10      # number of neighbors
 n = 30      # ??
@@ -28,9 +27,9 @@ B = get_lambda_neighborhoods(lam)
 N = len(lam) # number of subproblems
 subproblem_list = []
 for i in range(N):
-    temp_sol = solution.Solution(n,[0]*n,i)
+    temp_sol = solution.Solution(i, 'ZDT1')
     while not temp_sol.feasible:
-        temp_sol = solution.Solution(n, [0]*n, i)
+        temp_sol = solution.Solution(i, 'ZDT1')
     temp_sub = SubProblem(i,lam[i,:],B[i,:],temp_sol)
     subproblem_list.append(temp_sub)
 
@@ -54,7 +53,7 @@ for generation in range(MAXGEN):
         parent1 = subproblem_list[parents[0]].cur_solution
         parent2 = subproblem_list[parents[1]].cur_solution
 
-        offsprings = parent1.crossover_operator(parent2, generation)         #Genetic Operators
+        offsprings = parent1.crossover_operator(parent2, generation, 'ZDT1')         #Genetic Operators
         offspring = offsprings[0].give_the_best_of(offsprings[1], subproblem_list[i].lam, ideal_Z)
 
         offspring.mutation_operator2(0.1)
