@@ -66,7 +66,7 @@ def read_input(filename):
 			elif mult_and_xy_idx[0][0:-1] == '-':
 				o1_coeff[0,1 + x_len + int(mult_and_xy_idx[1])] = -1
 
-	objectives.append(o1_coeff[0])
+	objectives.append(o1_coeff)
 
 	# OBJECTIVE 2:
 	leading_chars = ' c'+str(n_constraints+1)
@@ -105,7 +105,7 @@ def read_input(filename):
 			elif mult_and_xy_idx[0][0:-1] == '-':
 				o2_coeff[0,1 + x_len + int(mult_and_xy_idx[1])] = -1
 
-	objectives.append(o2_coeff[0])
+	objectives.append(o2_coeff)
 
 	# CREATE CONSTRAINTS
 	A = np.zeros([n_constraints, 1 + x_len + 1 + y_len])
@@ -193,7 +193,7 @@ def read_input(filename):
 		elif var[0] == 'y':
 			binary[1+x_len+int(var[1])] = 1
 
-	return objectives, A, b, lb, ub, binary
+	return (objectives, A, b, lb, ub, binary)
 
 
 

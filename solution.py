@@ -5,6 +5,7 @@ This module defines objects related to the population in the MOEA/D genetic algo
 import numpy as np
 import random
 import utils as utils
+from read_input import read_input
 
 class Solution(object):
 	"""
@@ -18,7 +19,7 @@ class Solution(object):
 		feasible: Whether or not the solution is feasible.
 		objective_val: The value of the solution in objective space.
 	"""
-	def __init__(self, n_dim, num_type, subproblem):
+	def __init__(self, n_dim, subproblem, optimization_problem):
 		"""
 		Construct a new 'Solution' instance by random generation.
 		:param n_dim: The number of dimensions the solution has.
@@ -32,20 +33,25 @@ class Solution(object):
 		self.feasible = False
 		self.objective_val = None
 		self.x = [None]*n_dim
-		self.num_type = num_type
+		if optimization_problem == 'ZDT1':
+			self.num_type = [0]*n_dim
+		else:
+			opt_params = read_input(optimization_problem)
+			self.num_type = opt_params[5]
 
 		if not len(num_type) == n_dim:
 			raise ValueError('The number of dimensions does not match the length of the numeric type specification.')
+
 		for i in range(n_dim):
-			if num_type[i] == 'Binary':
+			if num_type[i] == 1:
 				# generate 0 or 1
 				self.x[i] = np.random.randint(2)
-			elif num_type[i] == 'Continuous':
+			elif num_type[i] == 0:
 				# generate random real number between 0 and 1
 				self.x[i] = np.random.uniform()
 
-		self.objective_val = self.evaluate_solution('ZDT1')
-		self.feasible = self.check_feasible('ZDT1')
+		self.objective_val = self.evaluate_solution(optimization_problem)
+		self.feasible = self.check_feasible(optimization_problem)
 
 	def evaluate_solution(self, optimization_problem):
 		"""
@@ -62,22 +68,56 @@ class Solution(object):
 			f2 = g*(1 - np.sqrt(f1/g))
 
 			return [f1, f2]
+		else:
+			opt_params = read_input(optimization_problem)
+			objective_coefficients = opt_params[0]
+			f1 = np.multiply(objective_coefficients[0], self.x)
+			f2 = np.multiply(objective_coefficients[1], self.x)
+
+			return [f1, f2]
+
 
 	def check_feasible(self, optimization_problem):
 		"""
 		Check that a solution x satisfies constraints in the optimization_problem.
 		:param optimization_problem: For now, only evaluates ZDT1
 		"""
+		any_constraint_violated = False
+		solution_feasible = True
+
 		if optimization_problem == 'ZDT1':
 			n = len(self.x)
 			if not n == 30:
 				raise ValueError('The solution needs to have dim 30 for the ZDT1 test instance.')
-		any_constraint_violated = False
-		solution_feasible = True
-		for i in range(n):
-			if self.x[i] > 1 or self.x[i] < 0:
+			for i in range(n):
+				if self.x[i] > 1 or self.x[i] < 0:
+					any_constraint_violated = True
+					break
+		else:
+			opt_params = read_input(optimization_problem)
+			A = opt_params[1]
+			b = opt_params[2]
+			lb = opt_params[3]
+			ub = opt_params[4]
+			binary = opt_params[5]
+
+			n = len(lb)
+			# First, check that all variables within bounds
+			for i in range(n):
+				if self.x[i] > ub[i] or self.x[i] < lb[i]:
+					any_constraint_violated = True
+					break
+			
+			# Next, check that Ax <= b
+			if not np.less_equal(A.dot(x), b).all():
 				any_constraint_violated = True
-				break
+			
+			# Finally, check if the binary variables are indeed binary
+			for i in range(n):
+				if binary[i] == 1 and not (self.x[i] in [0, 1, float(0), float(1)]):
+					any_constraint_violated = True
+					break
+
 		if any_constraint_violated:
 			solution_feasible = False
 		else:
@@ -137,10 +177,10 @@ class Solution(object):
 		evolution = self
 		mutated_dimension = np.random.randint(1, self.n_dim - 1)
 
-		if self.num_type[mutated_dimension] == 'Continuous':
+		if self.num_type[mutated_dimension] == 0: # Continuous
 			evolution.x[mutated_dimension] = self.x[mutated_dimension] + np.random.normal(0, self.x[mutated_dimension]^2 + 1)
 
-		elif self.num_type[mutated_dimension] == 'Binary':
+		elif self.num_type[mutated_dimension] == 1: # Binary
 			if self.x[mutated_dimension] == 1:
 				evolution.x[mutated_dimension] = 0
 			elif self.x[mutated_dimension] == 0:
@@ -156,13 +196,13 @@ class Solution(object):
 
 		for dimension in range(0, self.n_dim - 1):
 
-			if self.num_type[dimension] == 'Continuous':
+			if self.num_type[dimension] == 0: # Continuous
 				change = np.random.binomial(1, frequency_of_change)
 				if change == 1:
 					#print(self.x[dimension])
 					evolution.x[dimension] = self.x[dimension] + np.random.normal(0, (self.x[dimension]**2)/100)
 
-			elif self.num_type[dimension] == 'Binary':
+			elif self.num_type[dimension] == 1: # Binary
 				change = np.random.binomial(1, frequency_of_change)
 				if change == 1:
 					if self.x[dimension] == 1:

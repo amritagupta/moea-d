@@ -28,9 +28,9 @@ B = get_lambda_neighborhoods(lam)
 N = len(lam) # number of subproblems
 subproblem_list = []
 for i in range(N):
-    temp_sol = solution.Solution(n,['Continuous']*n,i)
+    temp_sol = solution.Solution(n,[0]*n,i)
     while not temp_sol.feasible:
-        temp_sol = solution.Solution(n, ['Continuous'] * n, i)
+        temp_sol = solution.Solution(n, [0]*n, i)
     temp_sub = SubProblem(i,lam[i,:],B[i,:],temp_sol)
     subproblem_list.append(temp_sub)
 
