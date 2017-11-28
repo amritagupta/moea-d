@@ -11,7 +11,7 @@ from sklearn.neighbors import NearestNeighbors
 
 def generate_lambda_vectors(m, H=25):
 	"""
-	Generates lambda (weight) vectors for creating scalarized subroblems from a 
+	Generates lambda (weight) vectors for creating scalarized subroblems from a
 	multi-objective optimization problem.
 
 	Args:
@@ -25,7 +25,7 @@ def generate_lambda_vectors(m, H=25):
 	N = int(comb(H+m-1, m-1)) # not convinced of this formula  # number of subproblems
 	lambda_vectors = np.empty([N,m])
 	possible_values = np.arange(0, 1+1/float(H), 1/float(H))
-	
+
 	for n in range(N):
 		value_indices = np.random.choice(range(H+1), 2, replace=True)
 		lambda_vectors[n,:] = possible_values[value_indices]
@@ -35,12 +35,12 @@ def generate_lambda_vectors(m, H=25):
 			lambda_vectors[n,:] = lambda_vectors[n,:]*float(1/sum(lambda_vectors[n,:]))
 		else: # handle case where all weights are zero, leading to division by zero
 			lambda_vectors[n,:] = np.ones([1,m])*float(1/m)
-	
+
 	return lambda_vectors
 
 def get_lambda_neighborhoods(lambda_vectors, T=10):
 	"""
-	Computes the neighborhood of each subproblem defined by lambda, by finding the 
+	Computes the neighborhood of each subproblem defined by lambda, by finding the
 	closest T lambda vectors.
 
 	Args:
@@ -97,7 +97,7 @@ def remove_newly_dominated_solutions(EP, offspring, objective_sense='min'):
 			raise ValueError('Objective sense should be either "min" or "max".')
 		if not es_dominated_by_offspring:
 			filtered_EP.append(es)
-	
+
 	return filtered_EP
 
 def add_if_not_dominated(offspring, EP, objective_sense='min'):
@@ -119,5 +119,32 @@ def add_if_not_dominated(offspring, EP, objective_sense='min'):
 			raise ValueError('Objective sense should be either "min" or "max".')
 	if not offspring_dominated_by_EP:
 		EP.append(offspring)
-	
+
 	return EP
+
+def repair(solution, previous_solution, optimization_problem):
+
+   fixed_solution = solution
+
+   for i in len(solution.x):
+      # binary
+      if binary[i] == 1:
+         if solution.x[i] =! previous_solution.x[i]:
+            if solution.x[i] == 1:
+               fixed_solution.x[i] = 0
+            else:
+               fixed_solution.x[i] = 1
+
+         if fixed_solution.solution.check_feasible(optimization_problem):
+            break
+
+      elif binary[i] == 0:
+         if solution.x[i] =! previous_solution.x[i]:
+            fixed_solution.x[i] = (solution.x[i]+ fixed_solution.x[i])/2
+
+          if fixed_solution.solution.check_feasible(optimization_problem):
+            break
+
+   return fixed_solution
+
+
