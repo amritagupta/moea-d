@@ -123,29 +123,26 @@ def add_if_not_dominated(offspring, EP, objective_sense='min'):
 	return EP
 
 def repair(solution, previous_solution, optimization_problem):
+	fixed_solution = solution
+	repaired_solution = 0
 
-   fixed_solution = solution
-   repaired_solution = 0
+	for i in len(solution.x):
+		# binary
+		if binary[i] == 1:
+			if solution.x[i] != previous_solution.x[i]:
+				if solution.x[i] == 1:
+					fixed_solution.x[i] = 0
+				else:
+					fixed_solution.x[i] = 1
+			if fixed_solution.solution.check_feasible(optimization_problem):
+				repaired_solution = fixed_solution
+				break
 
-   for i in len(solution.x):
-      # binary
-      if binary[i] == 1:
-         if solution.x[i] =! previous_solution.x[i]:
-            if solution.x[i] == 1:
-               fixed_solution.x[i] = 0
-            else:
-               fixed_solution.x[i] = 1
+		elif binary[i] == 0:
+			if solution.x[i] != previous_solution.x[i]:
+				fixed_solution.x[i] = (solution.x[i]+ fixed_solution.x[i])/2
+			if fixed_solution.solution.check_feasible(optimization_problem):
+				repaired_solution = fixed_solution
+				break
 
-         if fixed_solution.solution.check_feasible(optimization_problem):
-            repaired_solution = fixed_solution
-            break
-
-      elif binary[i] == 0:
-         if solution.x[i] =! previous_solution.x[i]:
-            fixed_solution.x[i] = (solution.x[i]+ fixed_solution.x[i])/2
-
-          if fixed_solution.solution.check_feasible(optimization_problem):
-            repaired_solution = fixed_solution
-            break
-
-   return repaired_solution
+	return repaired_solution
