@@ -231,8 +231,10 @@ class Solution(object):
 		"""
 		crossover_point = random.choice(range(1, self.n_dim - 1))
 
-		new_solution1 = Solution(self.subproblem, optimization_problem)
-		new_solution2 = Solution(self.subproblem, optimization_problem)
+		# new_solution1 = Solution(self.subproblem, optimization_problem)
+		new_solution1 = self
+		# new_solution2 = Solution(self.subproblem, optimization_problem)
+		new_solution2 = solution2
 		new_solution1.generation = generation
 		new_solution2.generation = generation
 
