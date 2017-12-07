@@ -2,7 +2,7 @@
 """
 A script for solving multi-objective optimization problems using an evolutionary algorithm.
 """
-import random
+import random, time
 import numpy as np
 import matplotlib.pyplot as plt
 plt.style.use('ggplot')
@@ -14,7 +14,7 @@ from parse_lpfile import lp_parser
 
 ########## MOEA/D + RUNTIME PARAMETERS ##########
 T = 10      # number of neighbors
-MAXGEN = 10
+MAXGEN = 50
 VERBOSE = True
 
 opt_prob = 'problem_instances/0-1_knapsack/BOKP_lp_format_instances/kp_20_1.lp'
@@ -57,6 +57,7 @@ for generation in range(MAXGEN):
 	if VERBOSE and generation%1 == 0:
 		print(generation)
 	for i in range(N): # for each subproblem
+		tstart = time.time()
 		parents = np.random.choice(subproblem_list[i].B,2,replace = False)
 		parent1 = subproblem_list[parents[0]].cur_solution
 		parent2 = subproblem_list[parents[1]].cur_solution
@@ -66,6 +67,8 @@ for generation in range(MAXGEN):
 
 		mutated_offspring = offspring.mutation_operator2(0.1, opt_prob)
 		offspring = mutated_offspring
+		tend = time.time()
+		# print('Creating feasible new offspring took %s seconds'%(tend-tstart))
         # if not mutated_offspring.feasible:
         #     for mc in range(3):
         #         mutated_offspring = repair(mutated_offspring, offspring, opt_prob)
@@ -77,20 +80,24 @@ for generation in range(MAXGEN):
 		ideal_Z = np.minimum(ideal_Z,offspring.objective_val)   # minimizing element-wise
 
 		for j in subproblem_list[i].B:
-			subproblem_list[j].cur_solution = subproblem_list[j].cur_solution.give_the_best_of(offspring,
-                                                                                               subproblem_list[j].lam,
-                                                                                               ideal_Z)
-		EP = remove_newly_dominated_solutions(EP, offspring, objective_sense='min')
-		EP = add_if_not_dominated(offspring, EP, objective_sense='min')
+			subproblem_list[j].cur_solution = subproblem_list[j].cur_solution.give_the_best_of(offspring, subproblem_list[j].lam,ideal_Z)
 
-	if generation%1 == 0 and generation > 1:
-		Z1 = [es.objective_val[0] for es in EP]
-		Z2 = [es.objective_val[1] for es in EP]
-		print Z1
-		print Z2
-		x_vector = [es.x for es in EP]
-		es_generation = [es.generation for es in EP]
-		plt.scatter(Z1, Z2, c=es_generation, cmap=plt.cm.RdYlGn, s=50)
+		EP = remove_newly_dominated_solutions(EP, offspring, objective_sense='min')
+		# print('Filtered EP')
+		# print [es.objective_val for es in EP]
+		EP = add_if_not_dominated(offspring, EP, objective_sense='min')
+	# print('Added EP')
+	# print [es.objective_val for es in EP]
+	# print('---------')
+		
+	# if generation%1 == 0 and generation > 1:
+	# 	Z1 = [es.objective_val[0] for es in EP]
+	# 	Z2 = [es.objective_val[1] for es in EP]
+	# 	# print Z1
+	# 	# print Z2
+	# 	x_vector = [es.x for es in EP]
+	# 	es_generation = [es.generation for es in EP]
+	# 	plt.scatter(Z1, Z2, c=es_generation, cmap=plt.cm.RdYlGn, s=50)
 
 		# plot_z1 = np.arange(min(Z1),max(Z1), 0.1)   #f1value
 		# plot_z2 = [1 - np.sqrt(z1val) for z1val in plot_z1]
@@ -98,4 +105,7 @@ for generation in range(MAXGEN):
 		# plt.ylim(ymin=0,ymax=6)
 		# plt.xlim(xmin=0,xmax=1.2)
 
-		plt.savefig('figures/generation%s.png'%generation)
+		# plt.savefig('figures/generation%s.png'%generation)
+	plt.scatter([es.objective_val[0] for es in EP], [es.objective_val[1] for es in EP], s=50)
+	plt.savefig('figures/generation%s.png'%generation)
+	plt.close()
