@@ -91,4 +91,4 @@ for generation in range(MAXGEN):
         plt.ylim(ymin=0,ymax=6)
         plt.xlim(xmin=0,xmax=1.2)
 
-        plt.savefig('generation%s.png'%generation)
+        plt.savefig('figures/generation%s.png'%generation)

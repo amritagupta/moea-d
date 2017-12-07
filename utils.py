@@ -9,7 +9,7 @@ from scipy.misc import comb
 from sklearn.neighbors import NearestNeighbors
 
 
-def generate_lambda_vectors(m, H=25):
+def generate_lambda_vectors(m, H=125):
 	"""
 	Generates lambda (weight) vectors for creating scalarized subroblems from a
 	multi-objective optimization problem.
