@@ -225,31 +225,47 @@ class Solution(object):
 
 	
 
-	def crossover_operator(self, solution2, generation, optimization_problem):
+	def crossover_operator(self, solution2, generation, optimization_problem, verbose=False):
 		"""
 		Do cross over operations on 2 parents, choosing the best child with the g function
 		"""
 		crossover_point = random.choice(range(1, self.n_dim - 1))
 
-		# new_solution1 = Solution(self.subproblem, optimization_problem)
-		new_solution1 = self
-		# new_solution2 = Solution(self.subproblem, optimization_problem)
-		new_solution2 = solution2
+		new_solution1 = Solution(self.subproblem, optimization_problem)
+		new_solution2 = Solution(self.subproblem, optimization_problem)
 		new_solution1.generation = generation
 		new_solution2.generation = generation
 
-		for dimension in range(0, self.n_dim - 1):
-			if dimension < crossover_point:
-				new_solution1.x[dimension] = self.x[dimension]
-				new_solution2.x[dimension] = solution2.x[dimension]
-			elif dimension >= crossover_point:
-				new_solution1.x[dimension] = solution2.x[dimension]
-				new_solution2.x[dimension] = self.x[dimension]
+		# new_solution1.x[0, 1:crossover_point] = self.x[0, 1:crossover_point]
+		new_solution1.x[0, 0:crossover_point] = self.x[0, 0:crossover_point]
+		new_solution1.x[0, crossover_point+1:] = solution2.x[0, crossover_point+1:]
+		new_solution2.x[0, 0:crossover_point] = solution2.x[0, 0:crossover_point]
+		new_solution2.x[0, crossover_point+1:] = self.x[0, crossover_point+1:]
+		
+		# for dimension in range(0, self.n_dim - 1):
+		# 	if dimension < crossover_point:
+		# 		new_solution1.x[0, dimension] = self.x[dimension]
+		# 		new_solution2.x[dimension] = solution2.x[dimension]
+		# 	elif dimension >= crossover_point:
+		# 		new_solution1.x[dimension] = solution2.x[dimension]
+		# 		new_solution2.x[dimension] = self.x[dimension]
 
-		new_solution1.objective_val = new_solution1.evaluate_solution(optimization_problem)
-		new_solution2.objective_val = new_solution2.evaluate_solution(optimization_problem)
 		new_solution1.feasible = new_solution1.check_feasible(optimization_problem)
 		new_solution2.feasible = new_solution2.check_feasible(optimization_problem)
+		while not new_solution1.feasible:
+			if verbose:
+				print('Repairing after crossover.')
+			new_solution1.repair_step(optimization_problem)
+			new_solution1.feasible = new_solution1.check_feasible(optimization_problem)
+
+		while not new_solution2.feasible:
+			if verbose:
+				print('Repairing after crossover.')
+			new_solution2.repair_step(optimization_problem)
+			new_solution2.feasible = new_solution2.check_feasible(optimization_problem)
+		new_solution1.objective_val = new_solution1.evaluate_solution(optimization_problem)
+		new_solution2.objective_val = new_solution2.evaluate_solution(optimization_problem)
+				
 		# One should never have to choose between his child..
 		#child_choice = random.choice(range(1,2))
 		#if child_choice == 1:
@@ -270,10 +286,8 @@ class Solution(object):
 
 		if grade1 < grade2:
 			best = self
-
 		else:
 			best = solution2
-
 		return best
 
 	def mutation_operator1(self):
@@ -296,27 +310,31 @@ class Solution(object):
 
 	def mutation_operator2(self, frequency_of_change, optimization_problem):
 		"""
-		Do mutation operation on a solution
+		Perform mutation operation on a solution.
 		"""
 		evolution = self
 
 		for dimension in range(0, self.n_dim):
-			if self.num_type[dimension] == 0: # Continuous
+			if self.v_type[dimension] == 'C': # Continuous
 				change = np.random.binomial(1, frequency_of_change)
 				if change == 1:
 					#print(self.x[dimension])
-					evolution.x[dimension] = np.random.uniform(0, 1) #evolution.x[dimension] + np.random.normal(0, (self.x[dimension]**2)/100)#
+					evolution.x[0,dimension] = np.random.uniform(0, 1) #evolution.x[dimension] + np.random.normal(0, (self.x[dimension]**2)/100)#
 
-			elif self.num_type[dimension] == 1: # Binary
+			elif self.v_type[dimension] == 'B': # Binary
 				change = np.random.binomial(1, frequency_of_change)
 				if change == 1:
-					if self.x[dimension] == 1:
-						evolution.x[dimension] = 0
-					elif self.x[dimension] == 0:
-						evolution.x[dimension] = 1
+					if self.x[0,dimension] == 1:
+						evolution.x[0,dimension] = 0
+					elif self.x[0,dimension] == 0:
+						evolution.x[0,dimension] = 1
+
+		evolution.feasible = evolution.check_feasible(optimization_problem)
+		while not evolution.feasible:
+			evolution.repair_step(optimization_problem)
+			evolution.feasible = evolution.check_feasible(optimization_problem)
 
 		evolution.objective_val = evolution.evaluate_solution(optimization_problem)
-		evolution.feasible = evolution.check_feasible(optimization_problem)
 		return evolution
 
 	def repair_child_MOKP(self, w, c, lambda_sub, ideal_z):

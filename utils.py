@@ -87,9 +87,17 @@ def remove_newly_dominated_solutions(EP, offspring, objective_sense='min'):
 	filtered_EP = []
 	for es in EP:
 		es_dominated_by_offspring = False
+		# print('offspring objective val')
+		# print(offspring.objective_val)
+		# print('efficient solution objective val')
+		# print(es.objective_val)
 		if objective_sense == 'min':
 			if np.greater_equal(es.objective_val, offspring.objective_val).all() and not np.equal(es.objective_val, offspring.objective_val).all():
 				es_dominated_by_offspring = True
+				print('offspring objective val')
+				print(offspring.objective_val)
+				print('efficient solution objective val')
+				print(es.objective_val)
 		elif objective_sense == 'max':
 			if np.less_equal(es.objective_val, offspring.objective_val) and not np.equal(es.objective_val, offspring.objective_val):
 				es_dominated_by_offspring = True
