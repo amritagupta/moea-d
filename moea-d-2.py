@@ -5,6 +5,7 @@ A script for solving multi-objective optimization problems using an evolutionary
 import random, time
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.colors import LinearSegmentedColormap
 plt.style.use('ggplot')
 
 from utils import *
@@ -14,12 +15,16 @@ from parse_lpfile import lp_parser
 
 ########## MOEA/D + RUNTIME PARAMETERS ##########
 T = 10      # number of neighbors
-MAXGEN = 50
+H = 125
+MAXGEN = 10
 VERBOSE = True
 
-opt_prob = 'problem_instances/0-1_knapsack/BOKP_lp_format_instances/kp_20_1.lp'
+opt_prob_dir = 'problem_instances/0-1_knapsack/BOKP_lp_format_instances/'
+opt_prob_instance = 'kp_20_1'
+opt_prob = opt_prob_dir+opt_prob_instance+'.lp'
 
 ################ INITIALIZATION ################
+EP_history = dict()
 # get optimization problem data
 prob_data = lp_parser(opt_prob, verbose=False)
 n_dvars = prob_data['n_dvars']
@@ -27,7 +32,7 @@ n_obj = prob_data['n_obj']
 n_constr = prob_data['n_constr']
 
 # initialize moea-d subproblems
-lam = generate_lambda_vectors(n_obj)
+lam = generate_lambda_vectors(n_obj, H = H)
 N = len(lam) # number of subproblems
 B = get_lambda_neighborhoods(lam)
 subproblem_list = []
@@ -106,6 +111,16 @@ for generation in range(MAXGEN):
 		# plt.xlim(xmin=0,xmax=1.2)
 
 		# plt.savefig('figures/generation%s.png'%generation)
-	plt.scatter([es.objective_val[0] for es in EP], [es.objective_val[1] for es in EP], s=50)
-	plt.savefig('figures/generation%s.png'%generation)
-	plt.close()
+
+
+	EP_history[generation] = EP
+	# plt.scatter([es.objective_val[0] for es in EP], [es.objective_val[1] for es in EP], s=50)
+	# plt.savefig('figures/generation%s.png'%generation)
+	# plt.close()
+
+for saved_gen in EP_history:
+	plt.scatter([es.objective_val[0] for es in EP_history[saved_gen]], [es.objective_val[1] for es in EP_history[saved_gen]], c=[es.generation for es in EP_history[saved_gen]], cmap = plt.cm.RdYlGn, s=50)
+plt.scatter([es.objective_val[0] for es in EP], [es.objective_val[1] for es in EP], marker='+', linewidths=1.5, color='white', s=80)
+plt.title(opt_prob_instance, fontsize=14)
+plt.savefig('figures/'+opt_prob_instance+'_gen_'+str(MAXGEN)+'_H_'+str(H)+'.png')
+# plt.show()
