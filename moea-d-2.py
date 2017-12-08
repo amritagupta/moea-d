@@ -16,15 +16,16 @@ from parse_lpfile import lp_parser
 ########## MOEA/D + RUNTIME PARAMETERS ##########
 T = 10      # number of neighbors
 H = 125
-MAXGEN = 10
+MAXGEN = 20
 VERBOSE = True
 
 opt_prob_dir = 'problem_instances/0-1_knapsack/BOKP_lp_format_instances/'
-opt_prob_instance = 'kp_20_1'
+opt_prob_instance = 'kp_20_1'#['kp_20_1', 'kp_80_10']
 opt_prob = opt_prob_dir+opt_prob_instance+'.lp'
 
 ################ INITIALIZATION ################
 EP_history = dict()
+n_nondom_pts_history = dict()
 # get optimization problem data
 prob_data = lp_parser(opt_prob, verbose=False)
 n_dvars = prob_data['n_dvars']
@@ -67,10 +68,10 @@ for generation in range(MAXGEN):
 		parent1 = subproblem_list[parents[0]].cur_solution
 		parent2 = subproblem_list[parents[1]].cur_solution
 
-		offsprings = parent1.crossover_operator(parent2, generation, opt_prob, verbose=False)         #Genetic Operators
+		offsprings = parent1.crossover_operator(parent2, generation, opt_prob, ideal_Z, subproblem_list[i].lam, verbose=False)         #Genetic Operators
 		offspring = offsprings[0].give_the_best_of(offsprings[1], subproblem_list[i].lam, ideal_Z)
 
-		mutated_offspring = offspring.mutation_operator2(0.1, opt_prob)
+		mutated_offspring = offspring.mutation_operator2(0.1, opt_prob, ideal_Z, subproblem_list[i].lam)
 		offspring = mutated_offspring
 		tend = time.time()
 		# print('Creating feasible new offspring took %s seconds'%(tend-tstart))
@@ -112,8 +113,9 @@ for generation in range(MAXGEN):
 
 		# plt.savefig('figures/generation%s.png'%generation)
 
-
-	EP_history[generation] = EP
+	if generation%5 == 0:
+		EP_history[generation] = EP
+		n_nondom_pts_history[generation] = len(EP)
 	# plt.scatter([es.objective_val[0] for es in EP], [es.objective_val[1] for es in EP], s=50)
 	# plt.savefig('figures/generation%s.png'%generation)
 	# plt.close()
@@ -122,5 +124,14 @@ for saved_gen in EP_history:
 	plt.scatter([es.objective_val[0] for es in EP_history[saved_gen]], [es.objective_val[1] for es in EP_history[saved_gen]], c=[es.generation for es in EP_history[saved_gen]], cmap = plt.cm.RdYlGn, s=50)
 plt.scatter([es.objective_val[0] for es in EP], [es.objective_val[1] for es in EP], marker='+', linewidths=1.5, color='white', s=80)
 plt.title(opt_prob_instance, fontsize=14)
-plt.savefig('figures/'+opt_prob_instance+'_gen_'+str(MAXGEN)+'_H_'+str(H)+'.png')
+plt.savefig('figures/'+opt_prob_instance+'_gen_'+str(MAXGEN)+'_H_'+str(H)+'_approx_frontier.png')
+plt.close()
+
+print sorted(n_nondom_pts_history.keys())
+plt.plot(sorted(n_nondom_pts_history.keys()), [n_nondom_pts_history[g] for g in sorted(n_nondom_pts_history.keys())])
+plt.xlabel('Generation Number')
+plt.ylabel('Number of Nondominated Points')
+plt.savefig('figures/'+opt_prob_instance+'_gen_'+str(MAXGEN)+'_H_'+str(H)+'_n_ndp_per_gen.png')
+plt.close()
+
 # plt.show()

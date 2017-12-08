@@ -167,9 +167,9 @@ class Solution(object):
 		# Repair bound violations
 		for i in range(len(self.x)):
 			if self.x[0,i] > ub[i,0] or self.x[0,i] < lb[i,0]:
-				print('BOUND VIOLATION FOUND')
+				# print('BOUND VIOLATION FOUND')
 				if v_type[i] == 'C':
-					self.x[0,i] -= np.random.uniform(low=lb[i,0], high=ub[i,0])
+					self.x[0,i] = np.random.uniform(low=lb[i,0], high=ub[i,0])
 		if self.check_feasible(optimization_problem):
 			return self
 
@@ -225,7 +225,7 @@ class Solution(object):
 
 	
 
-	def crossover_operator(self, solution2, generation, optimization_problem, verbose=False):
+	def crossover_operator(self, solution2, generation, optimization_problem, ideal_z, lambda_vector, verbose=False):
 		"""
 		Do cross over operations on 2 parents, choosing the best child with the g function
 		"""
@@ -255,13 +255,15 @@ class Solution(object):
 		while not new_solution1.feasible:
 			if verbose:
 				print('Repairing after crossover.')
-			new_solution1.repair_step(optimization_problem)
+			# new_solution1.repair_step(optimization_problem)
+			new_solution1.repair_child_MOKP(optimization_problem, ideal_z, lambda_vector)
 			new_solution1.feasible = new_solution1.check_feasible(optimization_problem)
 
 		while not new_solution2.feasible:
 			if verbose:
 				print('Repairing after crossover.')
-			new_solution2.repair_step(optimization_problem)
+			# new_solution2.repair_step(optimization_problem)
+			new_solution2.repair_child_MOKP(optimization_problem, ideal_z, lambda_vector)
 			new_solution2.feasible = new_solution2.check_feasible(optimization_problem)
 		new_solution1.objective_val = new_solution1.evaluate_solution(optimization_problem)
 		new_solution2.objective_val = new_solution2.evaluate_solution(optimization_problem)
@@ -290,25 +292,25 @@ class Solution(object):
 			best = solution2
 		return best
 
-	def mutation_operator1(self):
-		"""
-		Do mutation operation on a solution
-		"""
-		evolution = self
-		mutated_dimension = np.random.randint(1, self.n_dim - 1)
+	# def mutation_operator1(self):
+	# 	"""
+	# 	Do mutation operation on a solution
+	# 	"""
+	# 	evolution = self
+	# 	mutated_dimension = np.random.randint(1, self.n_dim - 1)
 
-		if self.num_type[mutated_dimension] == 0: # Continuous
-			evolution.x[mutated_dimension] = self.x[mutated_dimension] + np.random.normal(0, self.x[mutated_dimension]^2 + 1)
+	# 	if self.num_type[mutated_dimension] == 0: # Continuous
+	# 		evolution.x[mutated_dimension] = self.x[mutated_dimension] + np.random.normal(0, self.x[mutated_dimension]^2 + 1)
 
-		elif self.num_type[mutated_dimension] == 1: # Binary
-			if self.x[mutated_dimension] == 1:
-				evolution.x[mutated_dimension] = 0
-			elif self.x[mutated_dimension] == 0:
-				evolution.x[mutated_dimension] = 1
+	# 	elif self.num_type[mutated_dimension] == 1: # Binary
+	# 		if self.x[mutated_dimension] == 1:
+	# 			evolution.x[mutated_dimension] = 0
+	# 		elif self.x[mutated_dimension] == 0:
+	# 			evolution.x[mutated_dimension] = 1
 
-		return evolution
+	# 	return evolution
 
-	def mutation_operator2(self, frequency_of_change, optimization_problem):
+	def mutation_operator2(self, frequency_of_change, optimization_problem, ideal_z, lambda_vector):
 		"""
 		Perform mutation operation on a solution.
 		"""
@@ -331,30 +333,41 @@ class Solution(object):
 
 		evolution.feasible = evolution.check_feasible(optimization_problem)
 		while not evolution.feasible:
-			evolution.repair_step(optimization_problem)
+			# print('Repairing after mutation step.')
+			# evolution.repair_step(optimization_problem)
+			evolution.repair_child_MOKP(optimization_problem, ideal_z, lambda_vector)
 			evolution.feasible = evolution.check_feasible(optimization_problem)
+		# print('SOLUTION REPAIRED!!!!!')
 
 		evolution.objective_val = evolution.evaluate_solution(optimization_problem)
 		return evolution
 
-	def repair_child_MOKP(self, w, c, lambda_sub, ideal_z):
+	# def repair_child_MOKP(self, constr_coeff, c, lambda_sub, ideal_z):
+	def repair_child_MOKP(self, optimization_problem, ideal_z, lambda_vector):
+		prob_data = lp_parser(optimization_problem, verbose=False)
+		n_constr = prob_data['n_constr']
+		constr_coeff = prob_data['constr_coeff']
+		constr_RHS = prob_data['constr_coeff']
+		constr_sense = prob_data['constr_sense']
 
-		m = len(self.objective_val)
-		J = [j for j in range(self.n_dim) if self.x[j]==1]
-		I = [i for i in range(m) if sum(w[i,j]*self.x[j] for i in range(self.n_dim))>c[i]]
-		Qstar = 100000000
-
+		J = [j for j in range(self.n_dim) if self.x[0,j]==1]
+		I = [i for i in range(n_constr) if np.dot(constr_coeff[i,:], self.x[0])>constr_RHS[i,0]]
+		Qstar = np.inf
 		for j in J:
-			x_j_minus = self.x
-			x_j_minus[j] = 0 # not 1
-			Q =  (- utils.g_te(self.x, lambda_sub, ideal_z) + utils.g_te(x_j_minus, lambda_sub, ideal_z))/ sum(w[i,j] for i in I)
+			x_j_minus = self
+			x_j_minus.x[0,j] = 0 # not 1
+			x_j_minus.objective_val = x_j_minus.evaluate_solution(optimization_problem)
+			
+			# print(sum(constr_coeff[i,j] for i in I))
+			Q =  (- utils.g_te(self, lambda_vector, ideal_z) + utils.g_te(x_j_minus, lambda_vector, ideal_z))/ sum(constr_coeff[i,j] for i in I)
+			# print Q
 
 			if Qstar > Q:
 				Qstar = Q
 				kmin = j
 
-		x_j_greedy = self.x
-		x_j_greedy[kmin] = 0
+		x_j_greedy = self
+		x_j_greedy.x[0,kmin] = 0
 
 		return x_j_greedy
 
